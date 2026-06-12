@@ -1,2 +1,5 @@
-.txt
-.md
+*.txt
+*.md
+.venv/
+__pycache__/
+*.pyc
