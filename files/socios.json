@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "dni": "12345678",
+        "nombre_completo": "socio uno",
+        "telefono": "0123456789",
+        "direccion": "direccion 1234",
+        "email": "email@uno.com",
+        "fecha_inscripcion": "2026-06-11",
+        "activo": true
+    }
+]
