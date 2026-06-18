@@ -7,6 +7,26 @@
         "direccion": "direccion 1234",
         "email": "email@uno.com",
         "fecha_inscripcion": "2026-06-11",
+        "activo": false
+    },
+    {
+        "id": 2,
+        "dni": "1234568",
+        "nombre_completo": "joel s",
+        "telefono": "123456789",
+        "direccion": "daskldja",
+        "email": "abc@h.com",
+        "fecha_inscripcion": "2026-06-18",
+        "activo": false
+    },
+    {
+        "id": 3,
+        "dni": "32145698",
+        "nombre_completo": "uhuas",
+        "telefono": "987456231",
+        "direccion": "lkajsd",
+        "email": "q@llkajs.com",
+        "fecha_inscripcion": "2026-06-18",
         "activo": true
     }
 ]

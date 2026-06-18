@@ -11,7 +11,7 @@ def agregar_socio_interactivo():
     direccion = solicitar_dato("Dirección: ")
     email = solicitar_dato("Email: ", validadores.validar_email, "Email inválido.")
     
-    exito, socio, mensaje = gestor_socios.alta_socio(dni, nombre, telefono, direccion, email)
+    mensaje = gestor_socios.alta_socio(dni, nombre, telefono, direccion, email)
     print(mensaje)
 
 def listar_socios_interactivo():
@@ -45,12 +45,12 @@ def editar_socio_interactivo():
     if nuevo_email: cambios["email"] = nuevo_email
     
     if cambios:
-        exito, mensaje = gestor_socios.editar_socio(dni, cambios)
+        mensaje = gestor_socios.editar_socio(dni, cambios)
         print(mensaje)
     else:
         print("No se realizaron cambios.")
 
 def eliminar_socio_interactivo():
     dni = input("DNI del socio a eliminar (baja lógica): ").strip()
-    exito, mensaje = gestor_socios.eliminar_socio_logico(dni)
+    mensaje = gestor_socios.eliminar_socio_logico(dni)
     print(mensaje)
