@@ -1,7 +1,7 @@
 import json
 import os
-from typing import List
-from domain.socio import Socio
+from typing import List, Optional
+from domain.socios import Socio
 
 DATA_DIR = "files"
 SOCIOS_FILE = os.path.join(DATA_DIR, "socios.json")
@@ -24,3 +24,17 @@ def guardar_socios(socios: List[Socio]):
 
 def existe_dni(dni: str, socios: List[Socio]) -> bool:
     return any(s.dni == dni for s in socios)
+
+def buscar_por_dni(dni: str) -> Optional[Socio]:
+    socios = cargar_socios()
+    for s in socios:
+        if s.dni == dni:
+            return s
+    return None
+
+def buscar_por_numero(numero: int) -> Optional[Socio]:
+    socios = cargar_socios()
+    for s in socios:
+        if s.numero_socio == numero:
+            return s
+    return None

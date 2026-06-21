@@ -1,41 +1,42 @@
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Optional
+from typing import Literal
 
 @dataclass
 class Socio:
-    id: int                         # Número de socio (autogenerado)
-    dni: str                        # Clave única
+    numero_socio: int                     # Autogenerado, único
+    dni: str                              # Clave única
     nombre_completo: str
     telefono: str
     direccion: str
     email: str
+    membresia: Literal["basica", "premium"]   # Nueva
     fecha_inscripcion: date = field(default_factory=date.today)
-    activo: bool = True             # Borrado lógico
-    
+    activo: bool = True
+
     def to_dict(self) -> dict:
-        """Convierte el objeto a diccionario para JSON."""
         return {
-            "id": self.id,
+            "numero_socio": self.numero_socio,
             "dni": self.dni,
             "nombre_completo": self.nombre_completo,
             "telefono": self.telefono,
             "direccion": self.direccion,
             "email": self.email,
+            "membresia": self.membresia,
             "fecha_inscripcion": self.fecha_inscripcion.isoformat(),
             "activo": self.activo
         }
-    
+
     @classmethod
     def from_dict(cls, data: dict) -> 'Socio':
-        """Crea un objeto Socio desde un diccionario."""
         return cls(
-            id=data["id"],
+            numero_socio=data["numero_socio"],
             dni=data["dni"],
             nombre_completo=data["nombre_completo"],
             telefono=data["telefono"],
             direccion=data["direccion"],
             email=data["email"],
+            membresia=data["membresia"],
             fecha_inscripcion=date.fromisoformat(data["fecha_inscripcion"]),
             activo=data["activo"]
         )
