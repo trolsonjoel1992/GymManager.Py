@@ -14,7 +14,7 @@ def mostrar_menu_principal():
     print("2. Gestión de Actividades (predefinidas)")
     print("3. Inscripciones a Actividades")
     print("4. Control de Asistencia")
-    print("5. Pagos y Control de Morosidad")
+    print("5. Registro de Pagos")
     print("6. Estadísticas y Reportes")
     print("7. Salir")
     print("="*50)
