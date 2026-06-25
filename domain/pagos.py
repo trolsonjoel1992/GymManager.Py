@@ -1,14 +1,16 @@
 from dataclasses import dataclass
 from datetime import date
+from typing import Literal
 
 @dataclass
 class Pago:
     id: int
-    numero_socio: int           # Relación con el socio
+    numero_socio: int
     fecha_pago: date
     monto: float
-    meses_cubiertos: int        # Número de meses que cubre este pago (1,2,3...)
-    observaciones: str = ""     # Opcional
+    meses_cubiertos: int        # número de meses que cubre este pago
+    membresia: Literal["basica", "premium"]   # membresía vigente al momento del pago
+    observaciones: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -17,6 +19,7 @@ class Pago:
             "fecha_pago": self.fecha_pago.isoformat(),
             "monto": self.monto,
             "meses_cubiertos": self.meses_cubiertos,
+            "membresia": self.membresia,
             "observaciones": self.observaciones
         }
 
@@ -28,5 +31,6 @@ class Pago:
             fecha_pago=date.fromisoformat(data["fecha_pago"]),
             monto=data["monto"],
             meses_cubiertos=data["meses_cubiertos"],
+            membresia=data["membresia"],
             observaciones=data.get("observaciones", "")
         )

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date
 from typing import Literal, Optional
 
 @dataclass
@@ -11,9 +11,11 @@ class Socio:
     direccion: str
     email: str
     membresia: Literal["basica", "premium"]
-    fecha_inscripcion: date = field(default_factory=date.today)  # alta original
-    fecha_ultimo_pago: Optional[date] = field(default=None)      # última fecha de pago
+    fecha_inscripcion: date = field(default_factory=date.today)
+    fecha_ultimo_pago: Optional[date] = field(default=None)
     activo: bool = True
+    motivo_baja: Optional[Literal["mora", "manual"]] = field(default=None)
+    fecha_cambio_membresia: Optional[date] = field(default=None)  # Nuevo campo
 
     def to_dict(self) -> dict:
         return {
@@ -26,7 +28,9 @@ class Socio:
             "membresia": self.membresia,
             "fecha_inscripcion": self.fecha_inscripcion.isoformat(),
             "fecha_ultimo_pago": self.fecha_ultimo_pago.isoformat() if self.fecha_ultimo_pago else None,
-            "activo": self.activo
+            "activo": self.activo,
+            "motivo_baja": self.motivo_baja,
+            "fecha_cambio_membresia": self.fecha_cambio_membresia.isoformat() if self.fecha_cambio_membresia else None
         }
 
     @classmethod
@@ -41,10 +45,7 @@ class Socio:
             membresia=data["membresia"],
             fecha_inscripcion=date.fromisoformat(data["fecha_inscripcion"]),
             fecha_ultimo_pago=date.fromisoformat(data["fecha_ultimo_pago"]) if data.get("fecha_ultimo_pago") else None,
-            activo=data["activo"]
+            activo=data["activo"],
+            motivo_baja=data.get("motivo_baja"),
+            fecha_cambio_membresia=date.fromisoformat(data["fecha_cambio_membresia"]) if data.get("fecha_cambio_membresia") else None
         )
-
-    def fecha_vencimiento(self, meses=1) -> date:
-        """Devuelve la fecha de vencimiento sumando 'meses' a fecha_ultimo_pago (o fecha_inscripcion si no hay pago)."""
-        base = self.fecha_ultimo_pago if self.fecha_ultimo_pago else self.fecha_inscripcion
-        return base + timedelta(days=meses * 30)
