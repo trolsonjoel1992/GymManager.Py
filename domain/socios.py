@@ -1,18 +1,21 @@
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Literal
+from typing import Literal, Optional
 
 @dataclass
 class Socio:
-    numero_socio: int                     # Autogenerado, único
-    dni: str                              # Clave única
+    numero_socio: int
+    dni: str
     nombre_completo: str
     telefono: str
     direccion: str
     email: str
-    membresia: Literal["basica", "premium"]   # Nueva
+    membresia: Literal["basica", "premium"]
     fecha_inscripcion: date = field(default_factory=date.today)
+    fecha_ultimo_pago: Optional[date] = field(default=None)
     activo: bool = True
+    motivo_baja: Optional[Literal["mora", "manual"]] = field(default=None)
+    fecha_cambio_membresia: Optional[date] = field(default=None)  # Nuevo campo
 
     def to_dict(self) -> dict:
         return {
@@ -24,7 +27,10 @@ class Socio:
             "email": self.email,
             "membresia": self.membresia,
             "fecha_inscripcion": self.fecha_inscripcion.isoformat(),
-            "activo": self.activo
+            "fecha_ultimo_pago": self.fecha_ultimo_pago.isoformat() if self.fecha_ultimo_pago else None,
+            "activo": self.activo,
+            "motivo_baja": self.motivo_baja,
+            "fecha_cambio_membresia": self.fecha_cambio_membresia.isoformat() if self.fecha_cambio_membresia else None
         }
 
     @classmethod
@@ -38,5 +44,8 @@ class Socio:
             email=data["email"],
             membresia=data["membresia"],
             fecha_inscripcion=date.fromisoformat(data["fecha_inscripcion"]),
-            activo=data["activo"]
+            fecha_ultimo_pago=date.fromisoformat(data["fecha_ultimo_pago"]) if data.get("fecha_ultimo_pago") else None,
+            activo=data["activo"],
+            motivo_baja=data.get("motivo_baja"),
+            fecha_cambio_membresia=date.fromisoformat(data["fecha_cambio_membresia"]) if data.get("fecha_cambio_membresia") else None
         )

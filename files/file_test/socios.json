@@ -1,0 +1,67 @@
+[
+    {
+        "numero_socio": 1,
+        "dni": "11111111",
+        "nombre_completo": "Socio Uno",
+        "telefono": "111111111",
+        "direccion": "Calle 1",
+        "email": "uno@mail.com",
+        "membresia": "basica",
+        "fecha_inscripcion": "2026-04-01",
+        "fecha_ultimo_pago": "2026-06-01",
+        "activo": true,
+        "motivo_baja": null
+    },
+    {
+        "numero_socio": 2,
+        "dni": "22222222",
+        "nombre_completo": "Socio Dos",
+        "telefono": "222222222",
+        "direccion": "Calle 2",
+        "email": "dos@mail.com",
+        "membresia": "basica",
+        "fecha_inscripcion": "2026-04-02",
+        "fecha_ultimo_pago": "2026-04-02",
+        "activo": false,
+        "motivo_baja": "mora"
+    },
+    {
+        "numero_socio": 3,
+        "dni": "33333333",
+        "nombre_completo": "Socio Tres",
+        "telefono": "333333333",
+        "direccion": "Calle 3",
+        "email": "tres@mail.com",
+        "membresia": "basica",
+        "fecha_inscripcion": "2026-04-03",
+        "fecha_ultimo_pago": "2026-05-15",
+        "activo": true,
+        "motivo_baja": null
+    },
+    {
+        "numero_socio": 4,
+        "dni": "44444444",
+        "nombre_completo": "Socio Cuatro",
+        "telefono": "444444444",
+        "direccion": "Calle 4",
+        "email": "cuatro@mail.com",
+        "membresia": "basica",
+        "fecha_inscripcion": "2026-04-04",
+        "fecha_ultimo_pago": "2026-05-29",
+        "activo": true,
+        "motivo_baja": null
+    },
+    {
+        "numero_socio": 5,
+        "dni": "55555555",
+        "nombre_completo": "Socio Cinco",
+        "telefono": "555555555",
+        "direccion": "Calle 5",
+        "email": "cinco@mail.com",
+        "membresia": "basica",
+        "fecha_inscripcion": "2026-04-05",
+        "fecha_ultimo_pago": "2026-06-20",
+        "activo": true,
+        "motivo_baja": null
+    }
+]

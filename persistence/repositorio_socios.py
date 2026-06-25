@@ -22,6 +22,19 @@ def guardar_socios(socios: List[Socio]):
     with open(SOCIOS_FILE, "w", encoding="utf-8") as f:
         json.dump([s.to_dict() for s in socios], f, indent=4, ensure_ascii=False)
 
+def actualizar_socio(socio_actualizado: Socio) -> bool:
+    """
+    Busca un socio por número y lo reemplaza en el archivo.
+    Retorna True si se encontró y actualizó, False en caso contrario.
+    """
+    socios = cargar_socios()
+    for i, s in enumerate(socios):
+        if s.numero_socio == socio_actualizado.numero_socio:
+            socios[i] = socio_actualizado
+            guardar_socios(socios)
+            return True
+    return False
+
 def existe_dni(dni: str, socios: List[Socio]) -> bool:
     return any(s.dni == dni for s in socios)
 
