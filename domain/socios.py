@@ -11,6 +11,7 @@ class Socio:
     direccion: str
     email: str
     membresia: Literal["basica", "premium"]
+    actividades: list = field(default_factory=list)
     fecha_inscripcion: date = field(default_factory=date.today)
     fecha_ultimo_pago: Optional[date] = field(default=None)
     activo: bool = True
@@ -26,6 +27,7 @@ class Socio:
             "direccion": self.direccion,
             "email": self.email,
             "membresia": self.membresia,
+            "actividades": self.actividades,
             "fecha_inscripcion": self.fecha_inscripcion.isoformat(),
             "fecha_ultimo_pago": self.fecha_ultimo_pago.isoformat() if self.fecha_ultimo_pago else None,
             "activo": self.activo,
@@ -43,6 +45,7 @@ class Socio:
             direccion=data["direccion"],
             email=data["email"],
             membresia=data["membresia"],
+            actividades=data.get("actividades", []),
             fecha_inscripcion=date.fromisoformat(data["fecha_inscripcion"]),
             fecha_ultimo_pago=date.fromisoformat(data["fecha_ultimo_pago"]) if data.get("fecha_ultimo_pago") else None,
             activo=data["activo"],
