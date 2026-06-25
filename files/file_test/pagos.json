@@ -1,0 +1,90 @@
+[
+    {
+        "id": 1,
+        "numero_socio": 1,
+        "fecha_pago": "2026-04-01",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago de alta"
+    },
+    {
+        "id": 2,
+        "numero_socio": 1,
+        "fecha_pago": "2026-05-01",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    },
+    {
+        "id": 3,
+        "numero_socio": 1,
+        "fecha_pago": "2026-06-01",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    },
+    {
+        "id": 4,
+        "numero_socio": 2,
+        "fecha_pago": "2026-04-02",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago de alta"
+    },
+    {
+        "id": 5,
+        "numero_socio": 3,
+        "fecha_pago": "2026-04-03",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago de alta"
+    },
+    {
+        "id": 6,
+        "numero_socio": 3,
+        "fecha_pago": "2026-05-15",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    },
+    {
+        "id": 7,
+        "numero_socio": 4,
+        "fecha_pago": "2026-04-04",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago de alta"
+    },
+    {
+        "id": 8,
+        "numero_socio": 4,
+        "fecha_pago": "2026-05-29",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    },
+    {
+        "id": 9,
+        "numero_socio": 5,
+        "fecha_pago": "2026-04-05",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago de alta"
+    },
+    {
+        "id": 10,
+        "numero_socio": 5,
+        "fecha_pago": "2026-05-05",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    },
+    {
+        "id": 11,
+        "numero_socio": 5,
+        "fecha_pago": "2026-06-20",
+        "monto": 0.0,
+        "meses_cubiertos": 1,
+        "observaciones": "Pago mensual"
+    }
+]

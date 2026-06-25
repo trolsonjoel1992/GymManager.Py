@@ -1,29 +1,24 @@
-# main.py
-from ui import menu_socios
-from ui import menu_actividades
-from ui import menu_inscripciones
-from ui import menu_asistencias
-from ui import menu_pagos
-from ui import menu_estadisticas
+from ui import menu_socios, menu_actividades, menu_inscripciones, menu_asistencias, menu_pagos, menu_estadisticas
+from services.gestor_socios import aplicar_baja_automatica
 
 def mostrar_menu_principal():
     print("\n" + "="*50)
-    print("         GESTOR DE GIMNASIO - ADMINISTRACIÓN")
+    print("         GESTOR DE GIMNASIO - ADMINISTRACION")
     print("="*50)
-    print("1. Gestión de Socios")
-    print("2. Gestión de Actividades (predefinidas)")
+    print("1. Gestion de Socios")
+    print("2. Gestion de Actividades (predefinidas)")
     print("3. Inscripciones a Actividades")
     print("4. Control de Asistencia")
-    print("5. Pagos y Control de Morosidad")
-    print("6. Estadísticas y Reportes")
+    print("5. Registro de Pagos")
+    print("6. Estadisticas y Reportes")
     print("7. Salir")
     print("="*50)
 
 def main():
+    aplicar_baja_automatica()   
     while True:
         mostrar_menu_principal()
-        opcion = input("Seleccione una opción (1-7): ").strip()
-        
+        opcion = input("Seleccione una opcion (1-7): ").strip()
         if opcion == "1":
             menu_socios.mostrar_submenu()
         elif opcion == "2":
@@ -40,7 +35,7 @@ def main():
             print("\n¡Hasta luego! Saliendo del sistema...")
             break
         else:
-            print("Opción no válida. Intente de nuevo.")
+            print("Opcion no valida. Intente de nuevo.")
 
 if __name__ == "__main__":
     main()

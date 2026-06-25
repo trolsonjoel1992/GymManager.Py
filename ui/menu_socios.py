@@ -1,10 +1,51 @@
 from services import gestor_socios
 from utils import validaciones_socios
 from utils.inputs import solicitar_dato
+from ui.helpers import reactivar_socio_interactivo
+from datetime import date
 
-def agregar_socio_interactivo():
-    print("\n--- Nuevo Socio ---")
+def mostrar_submenu():
+    while True:
+        print("\n" + "="*50)
+        print("          GESTIÓN DE SOCIOS")
+        print("="*50)
+        print("1. Registrar nuevo socio")
+        print("2. Listar socios")
+        print("3. Editar datos de socio")
+        print("4. Solicitar baja de socio")
+        print("5. Solicitar reactivación de socio")
+        print("6. Volver al menú principal")
+        print("="*50)
+        opcion = input("Seleccione una opción: ").strip()
+        if opcion == "1":
+            registrar_socio()
+        elif opcion == "2":
+            listar_socios_submenu()
+        elif opcion == "3":
+            editar_socio()
+        elif opcion == "4":
+            baja_socio()
+        elif opcion == "5":
+            reactivar_socio()
+        elif opcion == "6":
+            break
+        else:
+            print("Opción no válida.")
+
+def registrar_socio():
+    print("\n--- NUEVO SOCIO ---")
     dni = solicitar_dato("DNI (solo números, 7-8 dígitos): ", validaciones_socios.validar_dni, "DNI inválido.")
+    
+    socio_existente = gestor_socios.buscar_por_dni(dni)
+    if socio_existente:
+        if socio_existente.activo:
+            print(f"Ya existe un socio activo con DNI {dni}.")
+            return
+        else:
+            print(f"El DNI {dni} pertenece a un socio inactivo.")
+            reactivar_socio_interactivo(socio_existente)
+            return
+    
     nombre = solicitar_dato("Nombre completo: ", validaciones_socios.validar_nombre, "Nombre inválido.")
     telefono = solicitar_dato("Teléfono: ", validaciones_socios.validar_telefono, "Teléfono inválido.")
     direccion = solicitar_dato("Dirección: ")
@@ -19,19 +60,95 @@ def agregar_socio_interactivo():
     mensaje = gestor_socios.alta_socio(dni, nombre, telefono, direccion, email, membresia)
     print(mensaje)
 
-def listar_socios_interactivo():
-    socios = gestor_socios.listar_socios()
-    if not socios:
-        print("No hay socios activos.")
-        return
-    print("\n--- Socios Activos ---")
-    for s in socios:
-        estado_moroso = "MOROSO" if gestor_socios.es_moroso(s) else "AL DÍA"
-        print(f"N°: {s.numero_socio} | DNI: {s.dni} | {s.nombre_completo} | Membresía: {s.membresia} | {estado_moroso}")
+def listar_socios_submenu():
+    while True:
+        print("\n--- LISTAR SOCIOS ---")
+        print("1. Todos los socios (activos e inactivos)")
+        print("2. Socios morosos (período de gracia)")
+        print("3. Socios activos")
+        print("4. Socios inactivos")
+        print("5. Ver detalle de un socio")
+        print("6. Volver al menú anterior")
+        opcion = input("Seleccione una opción: ").strip()
+        if opcion == "1":
+            listar_todos()
+        elif opcion == "2":
+            listar_morosos()
+        elif opcion == "3":
+            listar_activos()
+        elif opcion == "4":
+            listar_inactivos()
+        elif opcion == "5":
+            ver_detalle_socio()
+        elif opcion == "6":
+            break
+        else:
+            print("Opción no válida.")
 
-def editar_socio_interactivo():
-    dni = input("DNI del socio a editar: ").strip()
-    socio = gestor_socios.buscar_por_dni(dni)
+def _mostrar_lista(socios, titulo):
+    if not socios:
+        print("No hay socios que mostrar.")
+        return
+    print(f"\n--- {titulo} ---")
+    for s in socios:
+        estado = gestor_socios.obtener_estado(s)
+        if estado == "activo":
+            estado_texto = "AL DÍA"
+        elif estado == "debe_cuota":
+            estado_texto = "MOROSO"
+        elif estado == "inactivo_por_deuda":
+            estado_texto = "INACTIVO POR DEUDA"
+        elif estado == "inactivo":
+            estado_texto = "INACTIVO (BAJA MANUAL)"
+        else:
+            estado_texto = estado
+        print(f"N°: {s.numero_socio} | DNI: {s.dni} | {s.nombre_completo} | Membresía: {s.membresia} | {estado_texto}")
+
+def listar_todos():
+    socios = gestor_socios.listar_socios(mostrar_inactivos=True)
+    _mostrar_lista(socios, "TODOS LOS SOCIOS")
+
+def listar_activos():
+    socios = gestor_socios.listar_socios_activos()
+    _mostrar_lista(socios, "SOCIOS ACTIVOS")
+
+def listar_inactivos():
+    socios = gestor_socios.listar_socios_inactivos()
+    _mostrar_lista(socios, "SOCIOS INACTIVOS")
+
+def listar_morosos():
+    socios = gestor_socios.listar_morosos()
+    _mostrar_lista(socios, "SOCIOS MOROSOS (PERÍODO DE GRACIA)")
+
+def ver_detalle_socio():
+    identificador = input("Ingrese DNI o número de socio: ").strip()
+    socio = gestor_socios.obtener_detalle_socio(identificador)
+    if not socio:
+        print("Socio no encontrado.")
+        return
+    estado = gestor_socios.obtener_estado(socio)
+    venc = gestor_socios.calcular_vencimiento(socio)
+    print("\n--- DETALLE DEL SOCIO ---")
+    print(f"Número de socio: {socio.numero_socio}")
+    print(f"DNI: {socio.dni}")
+    print(f"Nombre: {socio.nombre_completo}")
+    print(f"Teléfono: {socio.telefono}")
+    print(f"Dirección: {socio.direccion}")
+    print(f"Email: {socio.email}")
+    print(f"Membresía: {socio.membresia}")
+    print(f"Fecha de inscripción: {socio.fecha_inscripcion.strftime('%d/%m/%Y')}")
+    if socio.fecha_ultimo_pago:
+        print(f"Último pago: {socio.fecha_ultimo_pago.strftime('%d/%m/%Y')}")
+    print(f"Vencimiento actual: {venc.strftime('%d/%m/%Y')}")
+    print(f"Estado: {estado}")
+    if not socio.activo and socio.motivo_baja:
+        print(f"Motivo de baja: {socio.motivo_baja}")
+    if socio.fecha_cambio_membresia:
+        print(f"Último cambio de membresía: {socio.fecha_cambio_membresia.strftime('%d/%m/%Y')}")
+
+def editar_socio():
+    identificador = input("Ingrese DNI o número de socio a editar: ").strip()
+    socio = gestor_socios.buscar_por_identificador(identificador)
     if not socio:
         print("Socio no encontrado.")
         return
@@ -41,73 +158,27 @@ def editar_socio_interactivo():
     nueva_direccion = solicitar_dato(f"Nueva dirección [{socio.direccion}]: ", permitir_vacio=True)
     nuevo_email = solicitar_dato(f"Nuevo email [{socio.email}]: ", validaciones_socios.validar_email, "Email inválido.", permitir_vacio=True)
     
-    print("Nueva membresía (deje vacío para no cambiar):")
-    print("1. Básica")
-    print("2. Premium")
-    opcion_memb = solicitar_dato("Opción (1/2) o Enter: ", lambda x: x in ("1","2",""), "Opción inválida.", permitir_vacio=True)
-    nueva_membresia = None
-    if opcion_memb == "1":
-        nueva_membresia = "basica"
-    elif opcion_memb == "2":
-        nueva_membresia = "premium"
-    
     cambios = {}
     if nuevo_nombre: cambios["nombre_completo"] = nuevo_nombre
     if nuevo_telefono: cambios["telefono"] = nuevo_telefono
     if nueva_direccion: cambios["direccion"] = nueva_direccion
     if nuevo_email: cambios["email"] = nuevo_email
-    if nueva_membresia: cambios["membresia"] = nueva_membresia
     
     if cambios:
-        mensaje = gestor_socios.editar_socio(dni, cambios)
+        mensaje = gestor_socios.editar_socio(identificador, cambios)
         print(mensaje)
     else:
         print("No se realizaron cambios.")
 
-def eliminar_socio_interactivo():
-    dni = input("DNI del socio a eliminar (baja lógica): ").strip()
-    mensaje = gestor_socios.eliminar_socio_logico(dni)
+def baja_socio():
+    identificador = input("Ingrese DNI o número de socio a dar de baja: ").strip()
+    mensaje = gestor_socios.eliminar_socio_logico(identificador)
     print(mensaje)
 
-def reactivar_socio_interactivo():
-    identificador = input("Ingrese DNI o número de socio: ").strip()
-    mensaje = gestor_socios.reactivar_socio(identificador)
-    print(mensaje)
-
-def ver_morosos():
-    morosos = gestor_socios.listar_morosos()
-    if not morosos:
-        print("No hay socios morosos.")
+def reactivar_socio():
+    identificador = input("Ingrese DNI o número de socio a reactivar: ").strip()
+    socio = gestor_socios.buscar_por_identificador(identificador)
+    if not socio:
+        print("Socio no encontrado.")
         return
-    print("\n--- Socios Morosos ---")
-    for s in morosos:
-        deuda = gestor_socios.cuotas_adeudadas(s)
-        print(f"N°: {s.numero_socio} | DNI: {s.dni} | {s.nombre_completo} | Debe: {deuda} cuota(s)")
-
-def mostrar_submenu():
-    while True:
-        print("\n--- GESTIÓN DE SOCIOS ---")
-        print("1. Agregar socio")
-        print("2. Listar socios activos")
-        print("3. Editar socio")
-        print("4. Eliminar socio (baja lógica)")
-        print("5. Reactivar socio (inactivo)")
-        print("6. Ver socios morosos")
-        print("7. Volver al menú principal")
-        opcion = input("Seleccione una opción: ").strip()
-        if opcion == "1":
-            agregar_socio_interactivo()
-        elif opcion == "2":
-            listar_socios_interactivo()
-        elif opcion == "3":
-            editar_socio_interactivo()
-        elif opcion == "4":
-            eliminar_socio_interactivo()
-        elif opcion == "5":
-            reactivar_socio_interactivo()
-        elif opcion == "6":
-            ver_morosos()
-        elif opcion == "7":
-            break
-        else:
-            print("Opción no válida.")
+    reactivar_socio_interactivo(socio)
