@@ -214,3 +214,12 @@ def eliminar_socio_logico(identificador: str) -> str:
 
 def obtener_detalle_socio(identificador: str) -> Optional[Socio]:
     return buscar_por_identificador(identificador)
+def editar_actividades_socio(identificador: str, nuevas_actividades: list) -> str:
+    socio = buscar_por_identificador(identificador)
+    if not socio:
+        return f"No se encontró socio con identificador {identificador}."
+    socio.actividades = nuevas_actividades
+    if repositorio_socios.actualizar_socio(socio):
+        return "Actividades del socio actualizadas correctamente."
+    else:
+        return "Error al actualizar las actividades del socio."
