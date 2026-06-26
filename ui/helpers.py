@@ -16,16 +16,21 @@ def reactivar_socio_interactivo(socio) -> bool:
 
     # Determinar el caso y mostrar mensaje
     if socio.motivo_baja == "manual":
-        print("\nReactivación voluntaria (baja manual).")
+        print("\nReactivación voluntaria.")
         print("Seleccione la membresía deseada para la reactivación:")
-        print("1. Básica")
-        print("2. Premium")
-        opcion = input("Opción (1/2): ").strip()
-        if opcion not in ("1", "2"):
-            print("Opción inválida. Se mantiene la membresía actual.")
-            membresia_elegida = socio.membresia
-        else:
-            membresia_elegida = "basica" if opcion == "1" else "premium"
+        print(f"1. Básica (${gestor_socios.COSTO_BASICA:.2f})")
+        print(f"2. Premium (${gestor_socios.COSTO_PREMIUM:.2f})")
+        print("3. Cancelar")
+        while True:
+            opcion = input("Opción (1/2/3): ").strip()
+            if opcion == "3":
+                print("Reactivación cancelada.")
+                return False
+            if opcion in ("1", "2"):
+                break
+            print("Opción inválida. Intente nuevamente.")
+        membresia_elegida = "basica" if opcion == "1" else "premium"
+        detalle = gestor_socios.obtener_detalle_reactivacion(socio, membresia_elegida)
 
     else:  # mora
         venc = gestor_socios.calcular_vencimiento(socio)
@@ -33,35 +38,35 @@ def reactivar_socio_interactivo(socio) -> bool:
         hoy = date.today()
         if fecha_baja.year == hoy.year and fecha_baja.month == hoy.month:
             # mismo mes
-            print("\nReactivación por mora (mismo mes).")
+            print("\nReactivación por cuota vencida.")
             print(f"Debe pagar ${gestor_socios.obtener_costo_mensual(socio.membresia):.2f} (cuota del mes actual {socio.membresia.upper()}).")
-            print("No hay multa porque la baja fue en el mismo mes.")
-            print("No se permite cambiar de membresía en este paso; si desea cambiar, hágalo luego desde el menú de pagos.")
+            print("Si desea cambiar de membresía, hágalo luego desde el menú de pagos.")
             membresia_elegida = socio.membresia  # forzada
+            detalle = gestor_socios.obtener_detalle_reactivacion(socio, membresia_elegida)
         else:
             # meses diferentes
-            print("\nReactivación por mora (meses diferentes).")
-            multa = gestor_socios.obtener_costo_mensual(socio.membresia)
-            print(f"Multa: 1 mes de {socio.membresia.upper()} (${multa:.2f})")
-            print("Seleccione la membresía para la cuota del mes actual:")
-            print("1. Básica")
-            print("2. Premium")
-            opcion = input("Opción (1/2): ").strip()
-            if opcion not in ("1", "2"):
-                print("Opción inválida. Se mantiene la membresía actual.")
-                membresia_elegida = socio.membresia
-            else:
-                membresia_elegida = "basica" if opcion == "1" else "premium"
-
-    # Obtener detalle completo
-    detalle = gestor_socios.obtener_detalle_reactivacion(socio, membresia_elegida)
+            print("\nReactivación por deuda acumulada.")
+            print(f"Deuda: 1 mes de {socio.membresia.upper()} (${gestor_socios.obtener_costo_mensual(socio.membresia):.2f})")
+            print("Seleccione la membresía deseada para la reactivación:")
+            print(f"1. Básica (${gestor_socios.COSTO_BASICA:.2f})")
+            print(f"2. Premium (${gestor_socios.COSTO_PREMIUM:.2f})")
+            print("3. Cancelar")
+            while True:
+                opcion = input("Opción (1/2/3): ").strip()
+                if opcion == "3":
+                    print("Reactivación cancelada.")
+                    return False
+                if opcion in ("1", "2"):
+                    break
+                print("Opción inválida. Intente nuevamente.")
+            membresia_elegida = "basica" if opcion == "1" else "premium"
+            detalle = gestor_socios.obtener_detalle_reactivacion(socio, membresia_elegida)
 
     # Mostrar resumen
     print(f"\nResumen de la reactivación:")
     print(f"Meses a pagar: {detalle['meses']}")
     print(f"Monto total: ${detalle['monto_total']:.2f}")
     print(f"Observación: {detalle['observacion']}")
-    print(f"Fecha de cobertura: se extenderá hasta {detalle['fecha_fin'].strftime('%d/%m/%Y')}")
 
     # Confirmar
     confirm = input("\n¿Desea reactivar y registrar el pago? (s/n): ").strip().lower()
@@ -70,6 +75,6 @@ def reactivar_socio_interactivo(socio) -> bool:
         return False
 
     # Ejecutar reactivación
-    mensaje = gestor_socios.reactivar_socio(socio.dni, detalle['meses'], detalle['membresia_elegida'])
+    mensaje = gestor_socios.reactivar_socio(socio.dni, detalle['membresia_elegida'])
     print(mensaje)
     return True

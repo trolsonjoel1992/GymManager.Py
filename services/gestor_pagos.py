@@ -2,12 +2,12 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from typing import List, Optional
 from domain.pagos import Pago
-from persistence import repositorio_pagos as repositorio_pago
+from persistence import repositorio_pagos 
 from persistence import repositorio_socios
 from services import gestor_socios
 
 def registrar_pago_automatico(numero_socio: int, meses: int, monto: float, membresia: str, observacion: str) -> Pago:
-    pagos = repositorio_pago.cargar_pagos()
+    pagos = repositorio_pagos.cargar_pagos()
     nuevo_id = max([p.id for p in pagos], default=0) + 1
     pago = Pago(
         id=nuevo_id,
@@ -18,7 +18,7 @@ def registrar_pago_automatico(numero_socio: int, meses: int, monto: float, membr
         membresia=membresia,
         observaciones=observacion
     )
-    repositorio_pago.agregar_pago(pago)
+    repositorio_pagos.agregar_pago(pago)
     return pago
 
 def registrar_pago(dni: str, monto: float, meses: int, nueva_membresia: Optional[str] = None) -> str:
@@ -42,18 +42,18 @@ def registrar_pago(dni: str, monto: float, meses: int, nueva_membresia: Optional
         membresia_abonada = socio.membresia
 
     hoy = date.today()
-    if socio.fecha_ultimo_pago is None:
+    if socio.fin_cobertura is None:
         nueva_fecha = hoy + relativedelta(months=meses)
     else:
-        nueva_fecha = socio.fecha_ultimo_pago + relativedelta(months=meses)
+        nueva_fecha = socio.fin_cobertura + relativedelta(months=meses)
         if nueva_fecha < hoy:
             nueva_fecha = hoy + relativedelta(months=meses)
-    socio.fecha_ultimo_pago = nueva_fecha
+    socio.fin_cobertura = nueva_fecha
 
     if not repositorio_socios.actualizar_socio(socio):
         return "Error al actualizar el socio."
 
-    pagos = repositorio_pago.cargar_pagos()
+    pagos = repositorio_pagos.cargar_pagos()
     nuevo_id = max([p.id for p in pagos], default=0) + 1
     pago = Pago(
         id=nuevo_id,
@@ -64,7 +64,7 @@ def registrar_pago(dni: str, monto: float, meses: int, nueva_membresia: Optional
         membresia=membresia_abonada,
         observaciones=observacion
     )
-    repositorio_pago.agregar_pago(pago)
+    repositorio_pagos.agregar_pago(pago)
 
     mensaje = f"Pago de ${monto} registrado. Cobertura extendida hasta {nueva_fecha.strftime('%d/%m/%Y')}."
     if nueva_membresia:
@@ -85,13 +85,13 @@ def obtener_historial_pagos(identificador: str, tipo_busqueda: str = "dni") -> L
         return []
     if not socio:
         return []
-    return repositorio_pago.obtener_pagos_por_socio(socio.numero_socio)
+    return repositorio_pagos.obtener_pagos_por_socio(socio.numero_socio)
 
 def obtener_ultimo_pago(dni: str) -> Optional[Pago]:
     socio = gestor_socios.buscar_por_dni(dni)
     if not socio:
         return None
-    return repositorio_pago.obtener_ultimo_pago(socio.numero_socio)
+    return repositorio_pagos.obtener_ultimo_pago(socio.numero_socio)
 
 def obtener_estado_cuotas(identificador: str, tipo_busqueda: str = "dni") -> str:
     socio = None

@@ -34,8 +34,15 @@ def registrar_pago_interactivo():
 
     if not socio.activo:
         print("El socio está inactivo. Para registrar un pago, primero debe reactivarlo.")
-        if reactivar_socio_interactivo(socio):
-            print("Reactivación completada.")
+        print("¿Desea reactivarlo o cancelar?")
+        print("1. Reactivar")
+        print("2. Cancelar")
+        opcion = input("Opción (1/2): ").strip()
+        if opcion == "1":
+            if reactivar_socio_interactivo(socio):
+                print("Reactivación completada. El pago se registró durante la reactivación.")
+            else:
+                print("Reactivación cancelada.")
         else:
             print("Operación cancelada.")
         return
@@ -45,12 +52,17 @@ def registrar_pago_interactivo():
 
     # Solicitar membresía a abonar
     print("\nSeleccione la membresía que abona:")
-    print("1. Básica")
-    print("2. Premium")
-    opcion_memb = input("Opción (1/2): ").strip()
-    if opcion_memb not in ("1", "2"):
-        print("Opción inválida.")
-        return
+    print(f"1. Básica (${gestor_socios.COSTO_BASICA:.2f})")
+    print(f"2. Premium (${gestor_socios.COSTO_PREMIUM:.2f})")
+    print("3. Cancelar")
+    while True:
+        opcion_memb = input("Opción (1/2/3): ").strip()
+        if opcion_memb == "3":
+            print("Operación cancelada.")
+            return
+        if opcion_memb in ("1", "2"):
+            break
+        print("Opción inválida. Intente nuevamente.")
     membresia_elegida = "basica" if opcion_memb == "1" else "premium"
 
     # Solicitar cantidad de meses
@@ -63,14 +75,11 @@ def registrar_pago_interactivo():
         print("Número inválido.")
         return
 
-    # Calcular monto automáticamente
     costo_mensual = gestor_socios.obtener_costo_mensual(membresia_elegida)
     monto = costo_mensual * meses
 
-    # Determinar si hay cambio de membresía
     nueva_membresia = membresia_elegida if membresia_elegida != socio.membresia else None
 
-    # Registrar pago
     mensaje = gestor_pagos.registrar_pago(socio.dni, monto, meses, nueva_membresia)
     print(mensaje)
 
@@ -92,7 +101,7 @@ def cambiar_membresia_premium():
 
     print(f"\nSocio: {socio.nombre_completo} (DNI: {socio.dni})")
     print(f"Membresía actual: BÁSICA")
-    confirm = input("¿Desea cambiar a membresía PREMIUM? El costo es de 1 mes de Premium. (s/n): ").strip().lower()
+    confirm = input("¿Desea cambiar a membresía PREMIUM? El costo es de 1 mes de Premium ($50.00). (s/n): ").strip().lower()
     if confirm != 's':
         print("Cambio cancelado.")
         return
