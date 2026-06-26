@@ -8,8 +8,8 @@ class Pago:
     numero_socio: int
     fecha_pago: date
     monto: float
-    meses_cubiertos: int        # número de meses que cubre este pago
-    membresia: Literal["basica", "premium"]   # membresía vigente al momento del pago
+    meses_cubiertos: int
+    membresia: Literal["basica", "premium"]
     observaciones: str = ""
 
     def to_dict(self) -> dict:

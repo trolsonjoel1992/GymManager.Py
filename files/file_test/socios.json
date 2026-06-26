@@ -7,10 +7,12 @@
         "direccion": "Calle 1",
         "email": "uno@mail.com",
         "membresia": "basica",
+        "actividades": [],
         "fecha_inscripcion": "2026-04-01",
         "fecha_ultimo_pago": "2026-06-01",
         "activo": true,
-        "motivo_baja": null
+        "motivo_baja": null,
+        "fecha_cambio_membresia": null
     },
     {
         "numero_socio": 2,
@@ -20,10 +22,12 @@
         "direccion": "Calle 2",
         "email": "dos@mail.com",
         "membresia": "basica",
+        "actividades": [],
         "fecha_inscripcion": "2026-04-02",
         "fecha_ultimo_pago": "2026-04-02",
         "activo": false,
-        "motivo_baja": "mora"
+        "motivo_baja": "mora",
+        "fecha_cambio_membresia": null
     },
     {
         "numero_socio": 3,
@@ -33,10 +37,12 @@
         "direccion": "Calle 3",
         "email": "tres@mail.com",
         "membresia": "basica",
+        "actividades": [],
         "fecha_inscripcion": "2026-04-03",
         "fecha_ultimo_pago": "2026-05-15",
-        "activo": true,
-        "motivo_baja": null
+        "activo": false,
+        "motivo_baja": "mora",
+        "fecha_cambio_membresia": null
     },
     {
         "numero_socio": 4,
@@ -46,10 +52,12 @@
         "direccion": "Calle 4",
         "email": "cuatro@mail.com",
         "membresia": "basica",
+        "actividades": [],
         "fecha_inscripcion": "2026-04-04",
         "fecha_ultimo_pago": "2026-05-29",
         "activo": true,
-        "motivo_baja": null
+        "motivo_baja": null,
+        "fecha_cambio_membresia": null
     },
     {
         "numero_socio": 5,
@@ -59,9 +67,26 @@
         "direccion": "Calle 5",
         "email": "cinco@mail.com",
         "membresia": "basica",
+        "actividades": [],
         "fecha_inscripcion": "2026-04-05",
         "fecha_ultimo_pago": "2026-06-20",
         "activo": true,
-        "motivo_baja": null
+        "motivo_baja": null,
+        "fecha_cambio_membresia": null
+    },
+    {
+        "numero_socio": 6,
+        "dni": "66666666",
+        "nombre_completo": "Socio Seis",
+        "telefono": "666666666",
+        "direccion": "Calle 6",
+        "email": "seis@mail.com",
+        "membresia": "basica",
+        "actividades": [],
+        "fecha_inscripcion": "2026-05-01",
+        "fecha_ultimo_pago": "2026-06-20",
+        "activo": false,
+        "motivo_baja": "manual",
+        "fecha_cambio_membresia": null
     }
 ]
