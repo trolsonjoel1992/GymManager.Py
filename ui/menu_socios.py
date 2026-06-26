@@ -43,7 +43,14 @@ def registrar_socio():
             return
         else:
             print(f"El DNI {dni} pertenece a un socio inactivo.")
-            reactivar_socio_interactivo(socio_existente)
+            print("¿Desea reactivarlo o cancelar?")
+            print("1. Reactivar")
+            print("2. Cancelar")
+            opcion = input("Opción (1/2): ").strip()
+            if opcion == "1":
+                reactivar_socio_interactivo(socio_existente)
+            else:
+                print("Operación cancelada.")
             return
     
     nombre = solicitar_dato("Nombre completo: ", validaciones_socios.validar_nombre, "Nombre inválido.")
@@ -137,8 +144,8 @@ def ver_detalle_socio():
     print(f"Email: {socio.email}")
     print(f"Membresía: {socio.membresia}")
     print(f"Fecha de inscripción: {socio.fecha_inscripcion.strftime('%d/%m/%Y')}")
-    if socio.fecha_ultimo_pago:
-        print(f"Último pago: {socio.fecha_ultimo_pago.strftime('%d/%m/%Y')}")
+    if socio.fin_cobertura:
+        print(f"Último pago: {socio.fin_cobertura.strftime('%d/%m/%Y')}")
     print(f"Vencimiento actual: {venc.strftime('%d/%m/%Y')}")
     print(f"Estado: {estado}")
     if not socio.activo and socio.motivo_baja:
@@ -152,18 +159,52 @@ def editar_socio():
     if not socio:
         print("Socio no encontrado.")
         return
+    if not socio.activo:
+        print("Socio inactivo.")
+        print("¿Desea reactivarlo o cancelar?")
+        print("1. Reactivar")
+        print("2. Cancelar")
+        opcion = input("Opción (1/2): ").strip()
+        if opcion == "1":
+            if reactivar_socio_interactivo(socio):
+                socio = gestor_socios.buscar_por_identificador(identificador)
+                if socio.activo:
+                    print("Socio reactivado. Ahora puede editar sus datos.")
+                else:
+                    print("La reactivación no se completó. No se puede editar.")
+                    return
+            else:
+                print("Operación cancelada.")
+                return
+        else:
+            print("Operación cancelada.")
+            return
     print(f"Editando a {socio.nombre_completo} (deje vacío para no modificar)")
-    nuevo_nombre = solicitar_dato(f"Nuevo nombre [{socio.nombre_completo}]: ", validaciones_socios.validar_nombre, "Nombre inválido.", permitir_vacio=True)
-    nuevo_telefono = solicitar_dato(f"Nuevo teléfono [{socio.telefono}]: ", validaciones_socios.validar_telefono, "Teléfono inválido.", permitir_vacio=True)
-    nueva_direccion = solicitar_dato(f"Nueva dirección [{socio.direccion}]: ", permitir_vacio=True)
-    nuevo_email = solicitar_dato(f"Nuevo email [{socio.email}]: ", validaciones_socios.validar_email, "Email inválido.", permitir_vacio=True)
-    
+    nuevo_nombre = solicitar_dato(f"Nuevo nombre [{socio.nombre_completo}]: ", 
+                                  validaciones_socios.validar_nombre, 
+                                  "Nombre inválido.", 
+                                  permitir_vacio=True)
+    nuevo_telefono = solicitar_dato(f"Nuevo teléfono [{socio.telefono}]: ", 
+                                    validaciones_socios.validar_telefono, 
+                                    "Teléfono inválido.", 
+                                    permitir_vacio=True)
+    nueva_direccion = solicitar_dato(f"Nueva dirección [{socio.direccion}]: ", 
+                                     permitir_vacio=True)
+    nuevo_email = solicitar_dato(f"Nuevo email [{socio.email}]: ", 
+                                 validaciones_socios.validar_email, 
+                                 "Email inválido.", 
+                                 permitir_vacio=True)
+
     cambios = {}
-    if nuevo_nombre: cambios["nombre_completo"] = nuevo_nombre
-    if nuevo_telefono: cambios["telefono"] = nuevo_telefono
-    if nueva_direccion: cambios["direccion"] = nueva_direccion
-    if nuevo_email: cambios["email"] = nuevo_email
-    
+    if nuevo_nombre:
+        cambios["nombre_completo"] = nuevo_nombre
+    if nuevo_telefono:
+        cambios["telefono"] = nuevo_telefono
+    if nueva_direccion:
+        cambios["direccion"] = nueva_direccion
+    if nuevo_email:
+        cambios["email"] = nuevo_email
+
     if cambios:
         mensaje = gestor_socios.editar_socio(identificador, cambios)
         print(mensaje)
