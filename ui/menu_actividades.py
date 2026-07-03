@@ -1,40 +1,49 @@
-from persistence.repositorio_actividades import buscar_por_nombre
+from persistence import repositorio_inscripciones
 from services import gestor_actividades
-
+from utils.inputs import input_int, input_str
 
 def mostrar_submenu():
     while True:
-        print("\n--- GESTIÓN DE ACTIVIDADES (predefinidas) ---")
+        print("\n--- GESTIÓN DE ACTIVIDADES ---")
         print("1. Ver listado de actividades disponibles")
         print("2. Ver detalles de una actividad")
         print("3. Volver al menú principal")
-        opcion = input("Seleccione una opción: ").strip()
-        if opcion == "1":
-            listar_actividades()
-        elif opcion == "2":
-            ver_detalle_actividad()
-        elif opcion == "3":
+        opcion = input_int("Seleccione opción: ", min=1, max=3)
+        if opcion == 1:
+            listar_disponibles()
+        elif opcion == 2:
+            ver_detalle()
+        elif opcion == 3:
             break
-        else:
-            print("Opción no válida.")
 
-def listar_actividades():
-    actividades = gestor_actividades.listar_actividades()
-    if not actividades:
-        print("No hay actividades disponibles.")
+def listar_disponibles():
+    disponibles = gestor_actividades.listar_actividades_disponibles()
+    if not disponibles:
+        print("No hay actividades disponibles en este momento.")
         return
-    print("\n--- LISTADO DE ACTIVIDADES ---")
-    for a in actividades:
-        print(f"{a.nombre} | Horario: {a.horario} | Cupo: {a.cupo}")
+    print("\nActividades disponibles:")
+    for act in disponibles:
+        turnos = ", ".join(act["turnos_disponibles"])
+        print(f"ID: {act['id']} | {act['nombre']} | Turnos con cupo: {turnos}")
 
-def ver_detalle_actividad():
-    nombre = input("Ingrese el nombre de la actividad: ").strip()
-    actividad = gestor_actividades.buscar_por_nombre(nombre)
-    if actividad:
-        print(f"\n[DETALLE DE ACTIVIDAD]")
-        print(f"Nombre: {actividad.nombre}")
-        print(f"Horario: {actividad.horario}")
-        print(f"Descripcion: {actividad.descripcion}")
-        print(f"Cupo: {actividad.cupo}")
+def ver_detalle():
+    identificador = input_str("Ingrese número o nombre de la actividad: ").strip()
+    if not identificador:
+        print("Debe ingresar un valor.")
+        return
+    act = None
+    if identificador.isdigit():
+        act = gestor_actividades.obtener_actividad(int(identificador))
     else:
+        act = gestor_actividades.obtener_actividad_por_nombre(identificador)
+    if not act:
         print("Actividad no encontrada.")
+        return
+    print(f"\n--- {act.nombre} ---")
+    print(f"Descripción: {act.descripcion}")
+    print("Cupos por turno:")
+    for turno in act.turnos:
+        cupo = act.cupo_por_turno(turno)
+        inscritos = repositorio_inscripciones.contar_inscritos_activos(act.id, turno)
+        print(f"  {turno.capitalize()}: {inscritos}/{cupo}")
+    print(f"Estado: {'Activa' if act.activa else 'Inactiva'}")

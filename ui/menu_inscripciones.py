@@ -1,40 +1,139 @@
+from datetime import date
+from services import gestor_actividades, gestor_inscripciones, gestor_socios
+from utils.inputs import input_int, input_str
+
 def mostrar_submenu():
     while True:
-        print("\n--- INSCRIPCIONES A ACTIVIDADES ---")
+        print("\n--- GESTIÓN DE INSCRIPCIONES ---")
         print("1. Inscribir socio a una actividad")
-        print("2. Ver actividades de un socio")
-        print("3. Dar de baja a un socio de una actividad")
+        print("2. Dar de baja a un socio de una actividad")
+        print("3. Ver actividades de un socio")
         print("4. Ver listado de socios inscritos en una actividad")
         print("5. Volver al menú principal")
-        opcion = input("Seleccione una opción: ").strip()
-        if opcion == "1":
-            inscribir_socio()
-        elif opcion == "2":
+        opcion = input_int("Seleccione opción: ", min=1, max=5)
+        if opcion == 1:
+            inscribir()
+        elif opcion == 2:
+            dar_baja()
+        elif opcion == 3:
             ver_actividades_socio()
-        elif opcion == "3":
-            dar_baja_socio()
-        elif opcion == "4":
-            ver_socios_por_actividad()
-        elif opcion == "5":
+        elif opcion == 4:
+            ver_socios_actividad()
+        elif opcion == 5:
             break
-        else:
-            print("Opción no válida.")
 
-def inscribir_socio():
-    print("\n[INSCRIBIR SOCIO] (Funcionalidad en desarrollo)")
-    dni = input("DNI del socio: ")
-    id_act = input("ID de la actividad: ")
-    print(f"→ Inscripción de socio {dni} a actividad {id_act} registrada (simulación).")
+def inscribir():
+    identificador = input_str("Ingrese DNI o número de socio: ")
+    socio = gestor_socios.buscar_por_identificador(identificador)
+    if not socio:
+        print("Socio no encontrado.")
+        return
+    disponibles = gestor_actividades.listar_actividades_disponibles()
+    if not disponibles:
+        print("No hay actividades con cupo disponible.")
+        return
+    print("\nActividades disponibles:")
+    for idx, act in enumerate(disponibles, 1):
+        print(f"{idx}. {act['nombre']} (ID: {act['id']})")
+    print(f"{len(disponibles)+1}. Cancelar")
+    opcion = input_int("Seleccione una actividad: ", min=1, max=len(disponibles) + 1)
+    if opcion == len(disponibles) + 1:
+        print("Operación cancelada.")
+        return
+    act_seleccionada = disponibles[opcion - 1]
+    id_act = act_seleccionada["id"]
+    turnos = act_seleccionada["turnos_disponibles"]
+    print("\nTurnos disponibles:")
+    for idx, turno in enumerate(turnos, 1):
+        print(f"{idx}. {turno.capitalize()}")
+    print(f"{len(turnos)+1}. Cancelar")
+    opcion_turno = input_int("Seleccione un turno: ", min=1, max=len(turnos) + 1)
+    if opcion_turno == len(turnos) + 1:
+        print("Operación cancelada.")
+        return
+    turno_elegido = turnos[opcion_turno - 1]
+    resultado = gestor_inscripciones.inscribir_socio(socio.numero_socio, id_act, turno_elegido)
+    print(resultado)
+
+def dar_baja():
+    identificador = input_str("Ingrese DNI o número de socio: ")
+    socio = gestor_socios.buscar_por_identificador(identificador)
+    if not socio:
+        print("Socio no encontrado.")
+        return
+    inscripciones = gestor_inscripciones.listar_actividades_de_socio(socio.numero_socio)
+    hoy = date.today()
+    activas = [i for i in inscripciones if i.activa and i.fecha_fin >= hoy]
+    if not activas:
+        print("El socio no tiene inscripciones activas.")
+        return
+    print("\nInscripciones activas:")
+    for idx, ins in enumerate(activas, 1):
+        act = gestor_actividades.obtener_actividad(ins.id_actividad)
+        nombre = act.nombre if act else "Desconocida"
+        print(f"{idx}. {nombre} - Turno: {ins.turno.capitalize()} (hasta {ins.fecha_fin.strftime('%Y-%m-%d')})")
+    print(f"{len(activas)+1}. Cancelar")
+    opcion = input_int("Seleccione la inscripción a dar de baja: ", min=1, max=len(activas) + 1)
+    if opcion == len(activas) + 1:
+        print("Operación cancelada.")
+        return
+    ins_seleccionada = activas[opcion - 1]
+    resultado = gestor_inscripciones.dar_baja_inscripcion(
+        socio.numero_socio, ins_seleccionada.id_actividad, ins_seleccionada.turno
+    )
+    print(resultado)
 
 def ver_actividades_socio():
-    dni = input("DNI del socio: ")
-    print(f"\n[Actividades del socio {dni}] (Funcionalidad en desarrollo)")
+    identificador = input_str("Ingrese DNI o número de socio: ")
+    socio = gestor_socios.buscar_por_identificador(identificador)
+    if not socio:
+        print("Socio no encontrado.")
+        return
+    inscripciones = gestor_inscripciones.listar_actividades_de_socio(socio.numero_socio)
+    if not inscripciones:
+        print("El socio no tiene inscripciones.")
+        return
+    print("\n--- Inscripciones del socio ---")
+    hoy = date.today()
+    for ins in inscripciones:
+        act = gestor_actividades.obtener_actividad(ins.id_actividad)
+        nombre = act.nombre if act else "Desconocida"
+        estado = "Activa" if ins.activa and ins.fecha_fin >= hoy else "Inactiva/Vencida"
+        print(
+            f"Actividad: {nombre} | Turno: {ins.turno.capitalize()} | "
+            f"Inicio: {ins.fecha_inicio.strftime('%Y-%m-%d')} | "
+            f"Fin: {ins.fecha_fin.strftime('%Y-%m-%d')} | Estado: {estado}"
+        )
 
-def dar_baja_socio():
-    dni = input("DNI del socio: ")
-    id_act = input("ID de la actividad: ")
-    print(f"→ Baja de socio {dni} de actividad {id_act} (simulación).")
-
-def ver_socios_por_actividad():
-    id_act = input("ID de la actividad: ")
-    print(f"\n[Lista de socios en actividad {id_act}] (Funcionalidad en desarrollo)")
+def ver_socios_actividad():
+    identificador = input_str("Ingrese número o nombre de la actividad: ").strip()
+    if not identificador:
+        print("Debe ingresar un valor.")
+        return
+    act = None
+    if identificador.isdigit():
+        act = gestor_actividades.obtener_actividad(int(identificador))
+    else:
+        act = gestor_actividades.obtener_actividad_por_nombre(identificador)
+    if not act:
+        print("Actividad no encontrada.")
+        return
+    print(f"\n--- {act.nombre} ---")
+    print("\nSeleccione el turno:")
+    for idx, turno in enumerate(act.turnos, 1):
+        print(f"{idx}. {turno.capitalize()}")
+    print(f"{len(act.turnos)+1}. Cancelar")
+    opcion = input_int("Seleccione un turno: ", min=1, max=len(act.turnos) + 1)
+    if opcion == len(act.turnos) + 1:
+        print("Operación cancelada.")
+        return
+    turno = act.turnos[opcion - 1]
+    socios_ids = gestor_inscripciones.listar_socios_en_actividad_turno(act.id, turno)
+    if not socios_ids:
+        print("No hay socios inscritos activamente en este turno.")
+        return
+    print(f"\n--- Socios inscritos en {act.nombre} - Turno {turno.capitalize()} ---")
+    for num in socios_ids:
+        socio = gestor_socios.buscar_por_numero(num)  # Más directo
+        if socio and socio.activo:  # Opcional: solo activos
+            print(f"Socio num {num} - {socio.nombre_completo}")
