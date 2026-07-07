@@ -1,5 +1,13 @@
 from datetime import date
-from typing import List
+from typing import List, Optional
+from domain.inscripciones import Inscripcion
+from persistence import repositorio_inscripciones as repo_insc
+from services import gestor_actividades, gestor_socios
+
+ID_MUSCULACION = gestor_actividades.ID_MUSCULACION
+
+from datetime import date
+from typing import List, Optional
 from domain.inscripciones import Inscripcion
 from persistence import repositorio_inscripciones as repo_insc
 from services import gestor_actividades, gestor_socios
@@ -12,6 +20,8 @@ def inscribir_socio(numero_socio: int, id_actividad: int, turno: str) -> str:
         return "Socio no encontrado."
     if not socio.activo:
         return "El socio está inactivo. No puede inscribirse."
+    if gestor_socios.es_moroso(socio):
+        return "El socio está en período de gracia (mora). Debe regularizar su cuota antes de inscribirse."
     actividad = gestor_actividades.obtener_actividad(id_actividad)
     if not actividad or not actividad.activa:
         return "Actividad no disponible."
@@ -85,12 +95,12 @@ def inscribir_automatico_musculacion(
 ) -> None:
     existente = repo_insc.obtener_activa(numero_socio, ID_MUSCULACION, "mañana")
     if existente:
-        return  
+        return
     nueva = Inscripcion(
         id=0,
         numero_socio=numero_socio,
         id_actividad=ID_MUSCULACION,
-        turno="mañana",  
+        turno="mañana",
         fecha_inicio=fecha_inicio,
         fecha_fin=fecha_fin,
         activa=True,
@@ -105,3 +115,11 @@ def dar_baja_todas_inscripciones(numero_socio: int) -> None:
             i.activa = False
             i.fecha_baja = date.today()
             repo_insc.actualizar(i)
+
+# NUEVO: Método para obtener inscripción activa (usado en asistencias)
+def obtener_activa(numero_socio: int, id_actividad: int, turno: str) -> Optional[Inscripcion]:
+    """
+    Retorna la inscripción activa del socio en la actividad y turno indicados,
+    o None si no existe.
+    """
+    return repo_insc.obtener_activa(numero_socio, id_actividad, turno)

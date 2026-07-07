@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "nombre": "Musculación",
+    "descripcion": "Entrenamiento de fuerza y acondicionamiento físico. Acceso libre.",
+    "cupo_manana": 30,
+    "cupo_tarde": 30,
+    "cupo_noche": 30,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 2,
+    "nombre": "Yoga",
+    "descripcion": "Clase de yoga para flexibilidad y relajación.",
+    "cupo_manana": 2,
+    "cupo_tarde": 2,
+    "cupo_noche": 2,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 3,
+    "nombre": "Zumba",
+    "descripcion": "Clase de baile y ejercicio cardiovascular.",
+    "cupo_manana": 2,
+    "cupo_tarde": 2,
+    "cupo_noche": 2,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 4,
+    "nombre": "Spinning",
+    "descripcion": "Ciclismo indoor de alta intensidad.",
+    "cupo_manana": 0,
+    "cupo_tarde": 0,
+    "cupo_noche": 0,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 5,
+    "nombre": "Pilates",
+    "descripcion": "Ejercicios de pilates para fortalecer el core y mejorar la postura.",
+    "cupo_manana": 1,
+    "cupo_tarde": 3,
+    "cupo_noche": 2,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 6,
+    "nombre": "CrossFit",
+    "descripcion": "Entrenamiento funcional de alta intensidad con ejercicios variados.",
+    "cupo_manana": 0,
+    "cupo_tarde": 2,
+    "cupo_noche": 4,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 7,
+    "nombre": "Funcional",
+    "descripcion": "Ejercicios con peso corporal y materiales para mejorar la resistencia.",
+    "cupo_manana": 3,
+    "cupo_tarde": 0,
+    "cupo_noche": 1,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  },
+  {
+    "id": 8,
+    "nombre": "Boxeo",
+    "descripcion": "Clase de boxeo recreativo con guantes y saco, mejora la coordinación.",
+    "cupo_manana": 2,
+    "cupo_tarde": 2,
+    "cupo_noche": 0,
+    "turnos": ["mañana", "tarde", "noche"],
+    "activa": true
+  }
+]

@@ -44,7 +44,7 @@ def obtener_activa(numero_socio: int, id_actividad: int, turno: str) -> Optional
     return None
 
 def contar_inscritos_activos(id_actividad: int, turno: str) -> int:
-    """Cuenta inscripciones activas para una actividad y turno especÃficos (fecha_fin >= hoy)."""
+    """Cuenta inscripciones activas para una actividad y turno específicos (fecha_fin >= hoy)."""
     hoy = date.today()
     return len(
         [
@@ -82,3 +82,11 @@ def eliminar_por_socio_actividad_turno(numero_socio: int, id_actividad: int, tur
         )
     ]
     _guardar(nuevas)
+
+def obtener_todas_activas_vigentes() -> List[Inscripcion]:
+    """
+    Retorna todas las inscripciones que están activas y cuya fecha_fin es >= hoy.
+    Utilizado por el proceso batch de bajas por faltas.
+    """
+    hoy = date.today()
+    return [i for i in _cargar() if i.activa and i.fecha_fin >= hoy]
