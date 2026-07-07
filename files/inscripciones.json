@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "numero_socio": 1,
+        "id_actividad": 1,
+        "turno": "mañana",
+        "fecha_inicio": "2026-07-06",
+        "fecha_fin": "2026-08-06",
+        "activa": true,
+        "fecha_baja": null
+    }
+]

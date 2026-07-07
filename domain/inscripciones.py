@@ -7,7 +7,7 @@ class Inscripcion:
     id: int
     numero_socio: int
     id_actividad: int
-    turno: str  # "maÃ±ana", "tarde", "noche"
+    turno: str  # "mañana", "tarde", "noche"
     fecha_inicio: date
     fecha_fin: date
     activa: bool = True

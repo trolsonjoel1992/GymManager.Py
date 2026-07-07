@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "numero_socio": 1,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-01",
+    "fecha_fin": "2026-07-01",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 2,
+    "numero_socio": 1,
+    "id_actividad": 2,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-01",
+    "fecha_fin": "2026-07-01",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 3,
+    "numero_socio": 1,
+    "id_actividad": 3,
+    "turno": "tarde",
+    "fecha_inicio": "2026-04-01",
+    "fecha_fin": "2026-07-01",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 4,
+    "numero_socio": 2,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-02",
+    "fecha_fin": "2026-04-02",
+    "activa": false,
+    "fecha_baja": "2026-05-01"
+  },
+  {
+    "id": 5,
+    "numero_socio": 3,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-03",
+    "fecha_fin": "2026-05-15",
+    "activa": false,
+    "fecha_baja": "2026-06-01"
+  },
+  {
+    "id": 6,
+    "numero_socio": 4,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-04",
+    "fecha_fin": "2026-06-28",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 7,
+    "numero_socio": 4,
+    "id_actividad": 5,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-04",
+    "fecha_fin": "2026-06-28",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 8,
+    "numero_socio": 4,
+    "id_actividad": 6,
+    "turno": "tarde",
+    "fecha_inicio": "2026-04-04",
+    "fecha_fin": "2026-06-28",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 9,
+    "numero_socio": 5,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-05",
+    "fecha_fin": "2026-07-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 10,
+    "numero_socio": 5,
+    "id_actividad": 7,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-05",
+    "fecha_fin": "2026-07-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 11,
+    "numero_socio": 5,
+    "id_actividad": 8,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-05",
+    "fecha_fin": "2026-07-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 12,
+    "numero_socio": 6,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-06-20",
+    "activa": false,
+    "fecha_baja": "2026-06-20"
+  },
+  {
+    "id": 13,
+    "numero_socio": 7,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-10",
+    "fecha_fin": "2026-07-10",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 14,
+    "numero_socio": 7,
+    "id_actividad": 2,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-10",
+    "fecha_fin": "2026-07-10",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 15,
+    "numero_socio": 7,
+    "id_actividad": 3,
+    "turno": "tarde",
+    "fecha_inicio": "2026-04-10",
+    "fecha_fin": "2026-07-10",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 16,
+    "numero_socio": 7,
+    "id_actividad": 5,
+    "turno": "noche",
+    "fecha_inicio": "2026-04-10",
+    "fecha_fin": "2026-07-10",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 17,
+    "numero_socio": 7,
+    "id_actividad": 6,
+    "turno": "tarde",
+    "fecha_inicio": "2026-04-10",
+    "fecha_fin": "2026-07-10",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 18,
+    "numero_socio": 8,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-04-15",
+    "fecha_fin": "2026-04-15",
+    "activa": false,
+    "fecha_baja": "2026-05-15"
+  },
+  {
+    "id": 19,
+    "numero_socio": 9,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-05-01",
+    "fecha_fin": "2026-06-01",
+    "activa": false,
+    "fecha_baja": "2026-06-01"
+  },
+  {
+    "id": 20,
+    "numero_socio": 10,
+    "id_actividad": 1,
+    "turno": "mañana",
+    "fecha_inicio": "2026-05-20",
+    "fecha_fin": "2026-06-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 21,
+    "numero_socio": 10,
+    "id_actividad": 7,
+    "turno": "mañana",
+    "fecha_inicio": "2026-05-20",
+    "fecha_fin": "2026-06-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 22,
+    "numero_socio": 10,
+    "id_actividad": 8,
+    "turno": "tarde",
+    "fecha_inicio": "2026-05-20",
+    "fecha_fin": "2026-06-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 23,
+    "numero_socio": 10,
+    "id_actividad": 5,
+    "turno": "noche",
+    "fecha_inicio": "2026-05-20",
+    "fecha_fin": "2026-06-20",
+    "activa": true,
+    "fecha_baja": null
+  },
+  {
+    "id": 24,
+    "numero_socio": 10,
+    "id_actividad": 3,
+    "turno": "tarde",
+    "fecha_inicio": "2026-05-20",
+    "fecha_fin": "2026-06-20",
+    "activa": true,
+    "fecha_baja": null
+  }
+]
