@@ -20,7 +20,7 @@ def solicitar_dato(mensaje, validador=None, mensaje_error="Dato inválido", perm
         print(mensaje_error)
 
 def input_str(mensaje, permitir_vacio=False):
-    """Solicita una cadena, opcionalmente vacía."""
+    """Solicita un campo alfanumérico, opcionalmente vacío."""
     return solicitar_dato(mensaje, permitir_vacio=permitir_vacio)
 
 def input_int(mensaje, min=None, max=None):
