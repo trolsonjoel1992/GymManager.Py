@@ -1,8 +1,9 @@
-from typing import List, Optional
 from datetime import date, timedelta
+from typing import List, Optional
 from dateutil.relativedelta import relativedelta
 from domain.socios import Socio
 from persistence import repositorio_socios
+from services import gestor_pagos, gestor_inscripciones
 
 DIAS_GRACIA = 10
 COSTO_BASICA = 30.0
@@ -52,17 +53,7 @@ def buscar_por_identificador(identificador: str) -> Optional[Socio]:
     return repositorio_socios.buscar_por_dni(identificador)
 
 def obtener_detalle_reactivacion(socio, membresia_elegida=None):
-    """
-    Retorna un dict con:
-    - meses: int (cantidad de meses que se pagan en total)
-    - monto_total: float
-    - observacion: str
-    - extender_desde_fin_cobertura: bool (True = extiende desde fin_cobertura, False = desde hoy)
-    - membresia_elegida: str
-    - fecha_fin: date (nueva fecha de vencimiento calculada)
-    """
     hoy = date.today()
-    
     if socio.motivo_baja == "manual":
         # Reactivación voluntaria: 1 mes, cobertura desde hoy
         meses = 1
@@ -72,30 +63,21 @@ def obtener_detalle_reactivacion(socio, membresia_elegida=None):
         observacion = f"Reactivación voluntaria - cuota {membresia_elegida}"
         extender_desde_fin_cobertura = False
         fecha_fin = hoy + relativedelta(months=1)
-    
     else:  # mora
         if socio.fecha_baja is None:
-            # Si por alguna razón no tiene fecha_baja, usamos una aproximación
-            # pero idealmente siempre debería tenerla.
             fecha_baja = calcular_vencimiento(socio) + timedelta(days=DIAS_GRACIA)
         else:
             fecha_baja = socio.fecha_baja
-
         dias_transcurridos = (hoy - fecha_baja).days
-
-        # Si transcurrieron 30 días o menos, consideramos que está dentro del mismo mes
-        # y solo debe pagar 1 mes, corriendo la fecha de vencimiento.
         if dias_transcurridos <= 30:
             meses = 1
             membresia_elegida = socio.membresia  # forzamos la actual
             monto = obtener_costo_mensual(membresia_elegida) * meses
             observacion = f"Reactivación por mora (mismo mes) - cuota {membresia_elegida}"
-            extender_desde_fin_cobertura = True   # CORRE desde la última cobertura
-            # Calcular fecha_fin: fin_cobertura + 1 mes
+            extender_desde_fin_cobertura = True
             base = socio.fin_cobertura if socio.fin_cobertura else socio.fecha_inscripcion
             fecha_fin = base + relativedelta(months=1)
         else:
-            # Pasó más de un mes: multa + cuota, cobertura desde hoy
             meses = 2
             membresia_actual = socio.membresia
             if membresia_elegida is None:
@@ -103,60 +85,50 @@ def obtener_detalle_reactivacion(socio, membresia_elegida=None):
             monto = obtener_costo_mensual(membresia_actual) + obtener_costo_mensual(membresia_elegida)
             observacion = f"Reactivación por mora (multa {membresia_actual} - cuota {membresia_elegida})"
             extender_desde_fin_cobertura = False
-            fecha_fin = hoy + relativedelta(months=1)  # cobertura real desde hoy
-
+            fecha_fin = hoy + relativedelta(months=1)
     return {
         "meses": meses,
         "monto_total": monto,
         "observacion": observacion,
         "extender_desde_fin_cobertura": extender_desde_fin_cobertura,
         "membresia_elegida": membresia_elegida,
-        "fecha_fin": fecha_fin
+        "fecha_fin": fecha_fin,
     }
 
 def _reactivar_socio(socio, nueva_membresia: str = None) -> str:
     if socio.activo:
         return "El socio ya está activo."
-
     detalle = obtener_detalle_reactivacion(socio, nueva_membresia)
     meses = detalle["meses"]
     monto_total = detalle["monto_total"]
     observacion = detalle["observacion"]
     extender_desde_fin_cobertura = detalle["extender_desde_fin_cobertura"]
     membresia_elegida = detalle["membresia_elegida"]
-
-    # Actualizar membresía si cambia
     if membresia_elegida != socio.membresia:
         socio.membresia = membresia_elegida
         socio.fecha_cambio_membresia = date.today()
-
-    # Calcular nueva fin_cobertura según el caso
     hoy = date.today()
     if extender_desde_fin_cobertura:
         base = socio.fin_cobertura if socio.fin_cobertura else socio.fecha_inscripcion
-        nueva_fecha = base + relativedelta(months=1)  # corre un mes desde la anterior
+        nueva_fecha = base + relativedelta(months=1)
     else:
-        nueva_fecha = hoy + relativedelta(months=1)   # desde hoy
-
+        nueva_fecha = hoy + relativedelta(months=1)
     socio.fin_cobertura = nueva_fecha
     socio.activo = True
     socio.motivo_baja = None
-    socio.fecha_baja = None  # limpiamos la fecha de baja
-
+    socio.fecha_baja = None
     if not repositorio_socios.actualizar_socio(socio):
         return "Error al actualizar el socio."
-
-    from services.gestor_pagos import registrar_pago_automatico
-    registrar_pago_automatico(
-        socio.numero_socio,
-        meses,
-        monto_total,
-        membresia_elegida,
-        observacion
+    # Registrar el pago automático
+    gestor_pagos.registrar_pago_automatico(
+        socio.numero_socio, meses, monto_total, membresia_elegida, observacion
     )
-
-    return (f"Socio {socio.nombre_completo} reactivado. Pago de {meses} mes(es) por ${monto_total:.2f}, "
-            f"cobertura hasta {socio.fin_cobertura.strftime('%d/%m/%Y')}.")
+    # Extender todas las inscripciones activas del socio
+    gestor_inscripciones.extender_inscripciones(socio.numero_socio, socio.fin_cobertura)
+    return (
+        f"Socio {socio.nombre_completo} reactivado. Pago de {meses} mes(es) por ${monto_total:.2f}, "
+        f"cobertura hasta {socio.fin_cobertura.strftime('%d/%m/%Y')}."
+    )
 
 def reactivar_socio(identificador: str, nueva_membresia: str = None) -> str:
     socio = buscar_por_identificador(identificador)
@@ -166,7 +138,9 @@ def reactivar_socio(identificador: str, nueva_membresia: str = None) -> str:
         return "El socio ya está activo."
     return _reactivar_socio(socio, nueva_membresia)
 
-def alta_socio(dni: str, nombre: str, telefono: str, direccion: str, email: str, membresia: str) -> str:
+def alta_socio(
+    dni: str, nombre: str, telefono: str, direccion: str, email: str, membresia: str
+) -> str:
     socio_existente = repositorio_socios.buscar_por_dni(dni)
     if socio_existente:
         if socio_existente.activo:
@@ -187,19 +161,14 @@ def alta_socio(dni: str, nombre: str, telefono: str, direccion: str, email: str,
         fin_cobertura=date.today() + relativedelta(months=1),
         activo=True,
         motivo_baja=None,
-        fecha_baja=None
+        fecha_baja=None,
     )
     socios.append(nuevo_socio)
     repositorio_socios.guardar_socios(socios)
-
-    from services.gestor_pagos import registrar_pago_automatico
     costo_mensual = obtener_costo_mensual(membresia)
-    registrar_pago_automatico(
-        nuevo_numero,
-        1,
-        costo_mensual,
-        membresia,
-        "Pago de alta"
+    gestor_pagos.registrar_pago_automatico(nuevo_numero, 1, costo_mensual, membresia, "Pago de alta")
+    gestor_inscripciones.inscribir_automatico_musculacion(
+        nuevo_numero, date.today(), nuevo_socio.fin_cobertura
     )
     return f"Socio {nombre} registrado. Cobertura hasta {nuevo_socio.fin_cobertura.strftime('%d/%m/%Y')}."
 
@@ -211,7 +180,7 @@ def aplicar_baja_automatica():
         if s.activo and dias_desde_vencimiento(s) > DIAS_GRACIA:
             s.activo = False
             s.motivo_baja = "mora"
-            s.fecha_baja = hoy   # registramos la fecha de desactivación
+            s.fecha_baja = hoy
             cambios = True
     if cambios:
         repositorio_socios.guardar_socios(socios)
@@ -270,6 +239,7 @@ def eliminar_socio_logico(identificador: str) -> str:
     socio.motivo_baja = "manual"
     socio.fecha_baja = date.today()
     if repositorio_socios.actualizar_socio(socio):
+        gestor_inscripciones.dar_baja_todas_inscripciones(socio.numero_socio)
         return f"Socio {socio.nombre_completo} (DNI {socio.dni}) marcado como inactivo (baja manual)."
     else:
         return "Error al actualizar el socio."

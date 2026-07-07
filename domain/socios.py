@@ -11,7 +11,6 @@ class Socio:
     direccion: str
     email: str
     membresia: Literal["basica", "premium"]
-    actividades: list = field(default_factory=list)
     fecha_inscripcion: date = field(default_factory=date.today)
     fin_cobertura: Optional[date] = field(default=None)
     activo: bool = True
@@ -28,17 +27,18 @@ class Socio:
             "direccion": self.direccion,
             "email": self.email,
             "membresia": self.membresia,
-            "actividades": self.actividades,
             "fecha_inscripcion": self.fecha_inscripcion.isoformat(),
             "fin_cobertura": self.fin_cobertura.isoformat() if self.fin_cobertura else None,
             "activo": self.activo,
             "motivo_baja": self.motivo_baja,
-            "fecha_cambio_membresia": self.fecha_cambio_membresia.isoformat() if self.fecha_cambio_membresia else None,
-            "fecha_baja": self.fecha_baja.isoformat() if self.fecha_baja else None
+            "fecha_cambio_membresia": (
+                self.fecha_cambio_membresia.isoformat() if self.fecha_cambio_membresia else None
+            ),
+            "fecha_baja": self.fecha_baja.isoformat() if self.fecha_baja else None,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'Socio':
+    def from_dict(cls, data: dict) -> "Socio":
         return cls(
             numero_socio=data["numero_socio"],
             dni=data["dni"],
@@ -47,11 +47,16 @@ class Socio:
             direccion=data["direccion"],
             email=data["email"],
             membresia=data["membresia"],
-            actividades=data.get("actividades", []),
             fecha_inscripcion=date.fromisoformat(data["fecha_inscripcion"]),
-            fin_cobertura=date.fromisoformat(data["fin_cobertura"]) if data.get("fin_cobertura") else None,
+            fin_cobertura=(
+                date.fromisoformat(data["fin_cobertura"]) if data.get("fin_cobertura") else None
+            ),
             activo=data["activo"],
             motivo_baja=data.get("motivo_baja"),
-            fecha_cambio_membresia=date.fromisoformat(data["fecha_cambio_membresia"]) if data.get("fecha_cambio_membresia") else None,
-            fecha_baja=date.fromisoformat(data["fecha_baja"]) if data.get("fecha_baja") else None
+            fecha_cambio_membresia=(
+                date.fromisoformat(data["fecha_cambio_membresia"])
+                if data.get("fecha_cambio_membresia")
+                else None
+            ),
+            fecha_baja=date.fromisoformat(data["fecha_baja"]) if data.get("fecha_baja") else None,
         )

@@ -9,6 +9,8 @@ def listar_actividades_disponibles() -> List[Dict]:
     todas = repo_act.listar_activas()
     resultado = []
     for act in todas:
+        if act.id == ID_MUSCULACION:
+            continue
         turnos_con_cupo = []
         for turno in act.turnos:
             inscritos = repo_insc.contar_inscritos_activos(act.id, turno)
@@ -43,3 +45,7 @@ def obtener_turnos_con_cupo(id_actividad: int) -> List[str]:
 
 def es_musculacion(id_actividad: int) -> bool:
     return id_actividad == ID_MUSCULACION
+
+def listar_activas() -> List[Actividad]:
+    """Retorna la lista de actividades con estado activo."""
+    return repo_act.listar_activas()

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Literal
 
+
 @dataclass
 class Pago:
     id: int
@@ -20,11 +21,11 @@ class Pago:
             "monto": self.monto,
             "meses_cubiertos": self.meses_cubiertos,
             "membresia": self.membresia,
-            "observaciones": self.observaciones
+            "observaciones": self.observaciones,
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> 'Pago':
+    def from_dict(cls, data: dict) -> "Pago":
         return cls(
             id=data["id"],
             numero_socio=data["numero_socio"],
@@ -32,5 +33,5 @@ class Pago:
             monto=data["monto"],
             meses_cubiertos=data["meses_cubiertos"],
             membresia=data["membresia"],
-            observaciones=data.get("observaciones", "")
+            observaciones=data.get("observaciones", ""),
         )

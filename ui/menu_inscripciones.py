@@ -2,6 +2,8 @@ from datetime import date
 from services import gestor_actividades, gestor_inscripciones, gestor_socios
 from utils.inputs import input_int, input_str
 
+ID_MUSCULACION = gestor_actividades.ID_MUSCULACION
+
 def mostrar_submenu():
     while True:
         print("\n--- GESTIÓN DE INSCRIPCIONES ---")
@@ -27,6 +29,13 @@ def inscribir():
     socio = gestor_socios.buscar_por_identificador(identificador)
     if not socio:
         print("Socio no encontrado.")
+        return
+    if not socio.activo:
+        print("El socio está inactivo. No puede inscribirse.")
+        return
+    estado = gestor_socios.obtener_estado(socio)
+    if estado == "debe_cuota":
+        print("El socio está en período de gracia (mora). Debe regularizar su cuota antes de inscribirse.")
         return
     disponibles = gestor_actividades.listar_actividades_disponibles()
     if not disponibles:
@@ -106,34 +115,36 @@ def ver_actividades_socio():
         )
 
 def ver_socios_actividad():
-    identificador = input_str("Ingrese número o nombre de la actividad: ").strip()
-    if not identificador:
-        print("Debe ingresar un valor.")
+    # Obtener todas las actividades activas
+    actividades = gestor_actividades.listar_activas()
+    if not actividades:
+        print("No hay actividades activas.")
         return
-    act = None
-    if identificador.isdigit():
-        act = gestor_actividades.obtener_actividad(int(identificador))
-    else:
-        act = gestor_actividades.obtener_actividad_por_nombre(identificador)
-    if not act:
-        print("Actividad no encontrada.")
+    print("\n--- Actividades disponibles ---")
+    for idx, act in enumerate(actividades, 1):
+        print(f"{idx}. {act.nombre}")
+    print(f"{len(actividades)+1}. Cancelar")
+    opcion = input_int("Seleccione una actividad: ", min=1, max=len(actividades)+1)
+    if opcion == len(actividades)+1:
+        print("Operación cancelada.")
         return
+    act = actividades[opcion-1]
     print(f"\n--- {act.nombre} ---")
     print("\nSeleccione el turno:")
     for idx, turno in enumerate(act.turnos, 1):
         print(f"{idx}. {turno.capitalize()}")
     print(f"{len(act.turnos)+1}. Cancelar")
-    opcion = input_int("Seleccione un turno: ", min=1, max=len(act.turnos) + 1)
-    if opcion == len(act.turnos) + 1:
+    opcion_turno = input_int("Seleccione un turno: ", min=1, max=len(act.turnos) + 1)
+    if opcion_turno == len(act.turnos) + 1:
         print("Operación cancelada.")
         return
-    turno = act.turnos[opcion - 1]
+    turno = act.turnos[opcion_turno - 1]
     socios_ids = gestor_inscripciones.listar_socios_en_actividad_turno(act.id, turno)
     if not socios_ids:
         print("No hay socios inscritos activamente en este turno.")
         return
     print(f"\n--- Socios inscritos en {act.nombre} - Turno {turno.capitalize()} ---")
     for num in socios_ids:
-        socio = gestor_socios.buscar_por_numero(num)  # Más directo
-        if socio and socio.activo:  # Opcional: solo activos
+        socio = gestor_socios.buscar_por_numero(num)
+        if socio and socio.activo:
             print(f"Socio num {num} - {socio.nombre_completo}")
